@@ -1,0 +1,24 @@
+#!/usr/bin/env php
+<?php
+
+require_once call_user_func(function() {
+    if (is_file($autoloadFile = __DIR__.'/../vendor/autoload.php')) {
+        return $autoloadFile;
+    }
+
+    if (is_file($autoloadFile = __DIR__.'/../../../autoload.php')) {
+        return $autoloadFile;
+    }
+
+    echo 'Could not find autoload.php. Did you forget to run "composer install --dev"?'.PHP_EOL;
+    exit(1);
+});
+
+use Silpion\ComposerChecker\Command\CheckDistCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application();
+$application->setName('Composer Checker');
+$application->setVersion('1.0');
+$application->add(new CheckDistCommand());
+$application->run();

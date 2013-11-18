@@ -1,0 +1,22 @@
+{
+    "name": "silpion/composer-checker",
+    "description": "Tool for checking composer configurations.",
+    "keywords": ["composer", "check", "config", "dependencies"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Julius Beckmann",
+            "email": "beckmann@silpion.de"
+        }
+    ],
+    "bin": ["bin/composer-checker"],
+    "require": {
+        "symfony/console": "~2.0"
+    },
+    "autoload": {
+        "psr-0": {
+            "Silpion\\ComposerChecker": ""
+        }
+    },
+    "target-dir": "Silpion/ComposerChecker"
+}

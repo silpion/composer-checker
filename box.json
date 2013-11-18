@@ -1,0 +1,18 @@
+{
+    "chmod": "0755",
+    "directories": [
+        "."
+    ],
+    "files": [
+        "bin/composer-checker"
+    ],
+    "replacements": {
+        "revision": "HEAD"
+    },
+    "map": [
+        { "Command" : "Silpion/ComposerChecker/Command" }
+    ],
+    "main": "bin/composer-checker",
+    "output": "composer-checker.phar",
+    "stub": true
+}

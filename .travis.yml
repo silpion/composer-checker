@@ -1,0 +1,21 @@
+language: php
+
+php:
+  - 5.3
+  - 5.4
+  - 5.5
+
+before_script:
+  - curl -s http://getcomposer.org/installer | php
+  - php composer.phar install
+  - curl -s http://box-project.org/installer.php | php
+  - php box.phar -v build
+
+script:
+  # Check Script.
+  - php bin/composer-checker check:dist -p github composer.lock | grep "All urls valid."
+  - php bin/composer-checker check:dist -p giub composer.lock | grep "Invalid urls found"
+  # Check PHAR.
+  - php composer-checker.phar check:dist -p github composer.lock | grep "All urls valid."
+  - php composer-checker.phar check:dist -p giub composer.lock | grep "Invalid urls found"
+
