@@ -1,6 +1,15 @@
 #!/usr/bin/env php
 <?php
 
+/*
+ * This file is part of the Silpion/ComposerChecker package.
+ *
+ * (c) Julius Beckmann <beckmann@silpion.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 require_once call_user_func(function() {
     if (is_file($autoloadFile = __DIR__.'/../vendor/autoload.php')) {
         return $autoloadFile;
