@@ -6,9 +6,9 @@ php:
   - 5.5
 
 before_script:
-  - curl -s http://getcomposer.org/installer | php
+  - curl -Ss http://getcomposer.org/installer | php
   - php composer.phar install
-  - curl -s http://box-project.org/installer.php | php
+  - curl -LSs http://box-project.org/installer.php | php
   - php box.phar -v build
 
 script:
