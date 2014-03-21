@@ -10,14 +10,14 @@ php:
 before_script:
   - curl -Ss http://getcomposer.org/installer | php
   - php composer.phar install
-  - curl -LSs http://box-project.org/installer.php | php
-  - php box.phar -v build
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then curl -LSs http://box-project.org/installer.php | php; fi;'
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php box.phar -v build; fi;'
 
 script:
   # Check Script.
   - php bin/composer-checker check:dist -p github composer.lock | grep "All urls valid."
   - php bin/composer-checker check:dist -p giub composer.lock | grep "Invalid urls found"
   # Check PHAR.
-  - php composer-checker.phar check:dist -p github composer.lock | grep "All urls valid."
-  - php composer-checker.phar check:dist -p giub composer.lock | grep "Invalid urls found"
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github composer.lock | grep "All urls valid."; fi;'
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p giub composer.lock | grep "Invalid urls found"; fi;'
 
