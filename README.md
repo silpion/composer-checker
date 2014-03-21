@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/silpion/composer-checker.svg?branch=master)](https://travis-ci.org/silpion/composer-checker)
 
 Composer Checker
 ======================
