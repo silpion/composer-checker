@@ -18,6 +18,10 @@ require_once call_user_func(function() {
     if (is_file($autoloadFile = __DIR__.'/../../../autoload.php')) {
         return $autoloadFile;
     }
+    
+    if (is_file($autoloadFile = __DIR__.'/../../../../../autoload.php')) {
+        return $autoloadFile;
+    }
 
     echo 'Could not find autoload.php. Did you forget to run "composer install --dev"?'.PHP_EOL;
     exit(1);
