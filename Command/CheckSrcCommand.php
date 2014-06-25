@@ -18,25 +18,25 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Command for checking the dist urls.
+ * Command for checking the src urls.
  *
  * @author Julius Beckmann <beckmann@silpion.de>
  */
-class CheckDistCommand extends Command
+class CheckSrcCommand extends Command
 {
     protected function configure()
     {
         $this
-        ->setName('check:dist')
-        ->setDescription('Matching the dist urls in a composer.lock file against some patterns.')
+        ->setName('check:src')
+        ->setDescription('Matching the src urls in a composer.lock file against some patterns.')
         ->addArgument('file', InputArgument::REQUIRED, 'composer.lock file to check')
         ->addOption(
             'url-pattern',
             'p',
             InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED,
-            'Regex-Patterns for dist-urls.'
+            'Regex-Patterns for src-urls.'
         )
-        ->addOption('allow-empty', null, InputOption::VALUE_NONE, 'Will allow empty dist urls.');
+        ->addOption('allow-empty', null, InputOption::VALUE_NONE, 'Will allow empty src urls.');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -75,7 +75,7 @@ class CheckDistCommand extends Command
 
             /** @var \Symfony\Component\Console\Helper\TableHelper $table */
             $table = $this->getApplication()->getHelperSet()->get('table');
-            $table->setHeaders(array('Package', 'Dist-URL'))->setRows($rows);
+            $table->setHeaders(array('Package', 'Src-URL'))->setRows($rows);
 
             $output->writeln('<error> --- Invalid urls found --- </error>');
             $table->render($output);
@@ -87,8 +87,8 @@ class CheckDistCommand extends Command
     }
 
     /**
-     * Will return a array of invalid packages and their dist-urls determined by the given patterns.
-     * A dist-url is invalid if NONE of the given patterns has matched.
+     * Will return a array of invalid packages and their urls determined by the given patterns.
+     * A url is invalid if NONE of the given patterns has matched.
      *
      * @param \stdClass $json
      * @param array $patterns
@@ -99,11 +99,11 @@ class CheckDistCommand extends Command
     {
         $errors = array();
         foreach ($json->packages as $package) {
-            if (!isset($package->dist)) {
-                $this->verbose($output, 'Dist not found in "' . $package->name . "\"\n", OutputInterface::VERBOSITY_VERBOSE);
+            if (!isset($package->source)) {
+                $this->verbose($output, 'Source not found in "' . $package->name . "\"\n", OutputInterface::VERBOSITY_VERBOSE);
                 $url = '';
             }else{
-                $url = $package->dist->url;
+                $url = $package->source->url;
             }
 
             $matched = false;
@@ -112,7 +112,7 @@ class CheckDistCommand extends Command
                 $regex = '|' . $pattern . '|';
                 $this->verbose(
                      $output,
-                     "Checking dist url '" . $url . "' with regex '" . $regex . "' -> ",
+                     "Checking src url '" . $url . "' with regex '" . $regex . "' -> ",
                          OutputInterface::VERBOSITY_VERBOSE
                 );
                 if (preg_match($regex, $url)) {

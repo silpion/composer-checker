@@ -15,6 +15,7 @@ Usage
       list         Lists commands
     check
       check:dist   Matching the dist urls in a composer.lock file against some patterns.
+      check:src    Matching the src urls in a composer.lock file against some patterns.
 
 
 Check: Dist-Urls
@@ -42,6 +43,20 @@ A positive example with a more complex regex:
 It is also possible to enforce to use only "https" dist-urls with a pattern like this:
 
     $ php bin/composer-checker check:dist -p "^https://" composer.lock
+
+Allowing empty or missing dist urls can be done with the `--allow-empty` switch.
+
+
+Check: Source-Urls
+---------------------
+
+Parallel to the dist urls, the source urls can be checked too.
+
+    $ php bin/composer-checker check:src -p "git@git.example.com/foo.git" composer.lock
+
+
+Allowing empty or missing source urls can be done with the `--allow-empty` switch.
+
 
 LICENSE
 -------
