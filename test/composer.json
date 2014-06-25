@@ -1,0 +1,35 @@
+{
+    "require": {
+        "symfony/console": "*",
+        "smarty/smarty": "*",
+        "javascript/jquery": "*"
+    },
+    "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "smarty/smarty",
+                "version": "3.1.7",
+                "source": {
+                    "url": "http://smarty-php.googlecode.com/svn/",
+                    "type": "svn",
+                    "reference": "tags/Smarty_3_1_7/distribution/"
+                },
+                "autoload": {
+                    "classmap": ["libs/"]
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
+                "name": "javascript/jquery",
+                "version": "1.7.2",
+                "dist": {
+                    "url": "http://code.jquery.com/jquery-1.7.2.js",
+                    "type": "file"
+                }
+            }
+        }
+    ]
+}

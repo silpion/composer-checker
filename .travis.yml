@@ -15,9 +15,10 @@ before_script:
 
 script:
   # Check Script.
-  - php bin/composer-checker check:dist -p github composer.lock | grep "All urls valid."
-  - php bin/composer-checker check:dist -p giub composer.lock | grep "Invalid urls found"
+  - php bin/composer-checker check:dist -p github test/composer.lock | grep "Invalid urls found"
+  - php bin/composer-checker check:dist -p github -p "jquery.com" test/composer.lock | grep "Invalid urls found"
+  - php bin/composer-checker check:dist -p github -p "jquery.com" --allow-empty test/composer.lock | grep "All urls valid"
   # Check PHAR.
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github composer.lock | grep "All urls valid."; fi;'
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p giub composer.lock | grep "Invalid urls found"; fi;'
-
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github test/composer.lock | grep "Invalid urls found"; fi;'
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github -p "jquery.com" test/composer.lock | grep "Invalid urls found"; fi;'
+  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github -p "jquery.com" --allow-empty test/composer.lock | grep "All urls valid"; fi;'
