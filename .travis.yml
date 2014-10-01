@@ -8,17 +8,28 @@ php:
   - hhvm
 
 before_script:
-  - composer self-update
+  - composer self-update || true
   - composer install
   - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then curl -LSs http://box-project.org/installer.php | php; fi;'
   - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php box.phar -v build; fi;'
 
 script:
   # Check Script.
+  #-- check:dist
   - php bin/composer-checker check:dist -p github test/composer.lock | grep "Invalid urls found"
   - php bin/composer-checker check:dist -p github -p "jquery.com" test/composer.lock | grep "Invalid urls found"
   - php bin/composer-checker check:dist -p github -p "jquery.com" --allow-empty test/composer.lock | grep "All urls valid"
+  #--- check:src
+  - php bin/composer-checker check:src -p github test/composer.lock | grep "Invalid urls found"
+  - php bin/composer-checker check:src -p github -p "jquery.com" test/composer.lock | grep "Invalid urls found"
+  - php bin/composer-checker check:src -p github -p "jquery.com" -p "googlecode.com" --allow-empty test/composer.lock | grep "All urls valid"
+  #--- remove:src
+  - cp -f test/composer.lock test.lock; grep '"source":' test.lock
+  - cp -f test/composer.lock test.lock; php bin/composer-checker remove:src test.lock && ! grep -q '"source":' test.lock
+  - cp -f test/composer.lock test.lock; php bin/composer-checker remove:src -e googlecode.com test.lock && grep -q '"source":' test.lock
+  #--- remove:dist
+  - cp -f test/composer.lock test.lock; grep '"dist":' test.lock
+  - cp -f test/composer.lock test.lock; php bin/composer-checker remove:dist test.lock && ! grep -q '"dist":' test.lock
+  - cp -f test/composer.lock test.lock; php bin/composer-checker remove:dist -e jquery.com test.lock && grep -q '"dist":' test.lock
   # Check PHAR.
   - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github test/composer.lock | grep "Invalid urls found"; fi;'
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github -p "jquery.com" test/composer.lock | grep "Invalid urls found"; fi;'
-  - sh -c 'if [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then php composer-checker.phar check:dist -p github -p "jquery.com" --allow-empty test/composer.lock | grep "All urls valid"; fi;'
