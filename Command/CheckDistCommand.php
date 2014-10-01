@@ -22,7 +22,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Julius Beckmann <beckmann@silpion.de>
  */
-class CheckDistCommand extends Command
+class CheckDistCommand extends BaseCommand
 {
     protected function configure()
     {
@@ -41,6 +41,8 @@ class CheckDistCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        parent::execute($input, $output);
+
         $patterns = $input->getOption('url-pattern');
         if (!$patterns) {
             $output->writeln('<error>Need at least one url-pattern.</error>');
@@ -52,17 +54,10 @@ class CheckDistCommand extends Command
             $patterns[] = '^$';
         }
 
-        $content = @file_get_contents($input->getArgument('file'));
-        if (!$content) {
-            $output->writeln('<error>File not found.</error>');
-
-            return 1;
-        }
-
-        $json = @json_decode($content);
-        if (!is_object($json) || json_last_error() != JSON_ERROR_NONE) {
-            $output->writeln('<error>Invalid JSON in file.</error>');
-
+        try {
+            $json = $this->readJsonFromFile($input->getArgument('file'));
+        }catch(\Exception $e) {
+            $output->writeln('<error>'.$e->getMessage().'</error>');
             return 1;
         }
 
@@ -73,12 +68,7 @@ class CheckDistCommand extends Command
                 $rows[] = array($package, $url);
             }
 
-            /** @var \Symfony\Component\Console\Helper\TableHelper $table */
-            $table = $this->getApplication()->getHelperSet()->get('table');
-            $table->setHeaders(array('Package', 'Dist-URL'))->setRows($rows);
-
-            $output->writeln('<error> --- Invalid urls found --- </error>');
-            $table->render($output);
+            $this->printTable($rows);
 
             return 1;
         }
@@ -87,63 +77,30 @@ class CheckDistCommand extends Command
     }
 
     /**
-     * Will return a array of invalid packages and their dist-urls determined by the given patterns.
-     * A dist-url is invalid if NONE of the given patterns has matched.
+     * Will return a array of invalid packages and their urls determined by the given patterns.
+     * A url is invalid if NONE of the given patterns has matched.
      *
      * @param \stdClass $json
      * @param array $patterns
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
      * @return array
      */
-    protected function searchUrlPatterns(\stdClass $json, array $patterns, OutputInterface $output)
+    protected function searchUrlPatterns(\stdClass $json, array $patterns)
     {
         $errors = array();
         foreach ($json->packages as $package) {
             if (!isset($package->dist)) {
-                $this->verbose($output, 'Dist not found in "' . $package->name . "\"\n", OutputInterface::VERBOSITY_VERBOSE);
+                $this->verbose('Dist not found in "' . $package->name . "\"\n", OutputInterface::VERBOSITY_VERBOSE);
                 $url = '';
             }else{
                 $url = $package->dist->url;
             }
 
-            $matched = false;
-
-            foreach ($patterns as $pattern) {
-                $regex = '|' . $pattern . '|';
-                $this->verbose(
-                     $output,
-                     "Checking dist url '" . $url . "' with regex '" . $regex . "' -> ",
-                         OutputInterface::VERBOSITY_VERBOSE
-                );
-                if (preg_match($regex, $url)) {
-                    $this->verbose($output, "MATCHED\n", OutputInterface::VERBOSITY_VERBOSE);
-                    $matched = true;
-                    break;
-                } else {
-                    $this->verbose($output, "NOT matched\n", OutputInterface::VERBOSITY_VERBOSE);
-                }
-            }
-
-            if (!$matched) {
+            if (!$this->doesUrlMatchToAtLeastOnePattern($url, $patterns)) {
                 $errors[$package->name] = $url;
             }
         }
 
         return $errors;
-    }
-
-    /**
-     * Verbose output helper.
-     *
-     * @param OutputInterface $output
-     * @param $message
-     * @param $level
-     */
-    private function verbose(OutputInterface $output, $message, $level)
-    {
-        if ($output->getVerbosity() >= $level) {
-            $output->write($message);
-        }
     }
 }
  

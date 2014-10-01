@@ -29,6 +29,8 @@ require_once call_user_func(function() {
 
 use Silpion\ComposerChecker\Command\CheckDistCommand;
 use Silpion\ComposerChecker\Command\CheckSrcCommand;
+use Silpion\ComposerChecker\Command\RemoveDistCommand;
+use Silpion\ComposerChecker\Command\RemoveSrcCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
@@ -36,4 +38,6 @@ $application->setName('Composer Checker');
 $application->setVersion('0.1');
 $application->add(new CheckDistCommand());
 $application->add(new CheckSrcCommand());
+$application->add(new RemoveDistCommand());
+$application->add(new RemoveSrcCommand());
 $application->run();
