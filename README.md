@@ -16,6 +16,9 @@ Usage
     check
       check:dist   Matching the dist urls in a composer.lock file against some patterns.
       check:src    Matching the src urls in a composer.lock file against some patterns.
+    remove
+      remove:dist   Removing dist urls from a composer.lock file.
+      remove:src    Removing src urls from a composer.lock file.
 
 
 Check: Dist-Urls
@@ -56,6 +59,29 @@ Parallel to the dist urls, the source urls can be checked too.
 
 
 Allowing empty or missing source urls can be done with the `--allow-empty` switch.
+
+
+Remove: Dist-Urls
+-------------------
+
+This command will remove distribution urls from a given `composer.lock` file.
+Forcing composer to install all packages from "source".
+
+It is possible to `--except` specific patterns like "jquery.com". These urls will _not_ be removed.
+
+    php bin/composer-checker remove:dist -e jquery.com composer.lock
+
+
+Remove: Source-Urls
+-------------------
+
+Working the same as the `remove:dist` counterpart. Removing the "source" entries from a given `composer.lock` file.
+
+    php bin/composer-checker remove:dist -e jquery.com composer.lock
+
+This command can be very useful for automated deploying.
+Because if a package mirror like Satis, holding "dist" copies, is not available, composer will silently fail back to using "source" packages creating a unnoticed dependency between production and the VCS.
+Removing all the "source" entries from a composer.lock file, will force composer to only use the "dist" urls or stop with a failure.
 
 
 LICENSE
