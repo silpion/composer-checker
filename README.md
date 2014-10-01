@@ -77,7 +77,7 @@ Remove: Source-Urls
 
 Working the same as the `remove:dist` counterpart. Removing the "source" entries from a given `composer.lock` file.
 
-    php bin/composer-checker remove:dist -e jquery.com composer.lock
+    php bin/composer-checker remove:src -e jquery.com composer.lock
 
 This command can be very useful for automated deploying.
 Because if a package mirror like Satis, holding "dist" copies, is not available, composer will silently fail back to using "source" packages creating a unnoticed dependency between production and the VCS.
